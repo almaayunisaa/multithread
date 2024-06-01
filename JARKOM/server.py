@@ -1,39 +1,6 @@
 from socket import * 
-import sys
 import threading
 import os
-
-def handleRequest():
-    # Membuat server
-    serverSocket = socket(AF_INET, SOCK_STREAM) 
-    serverPort = 7000
-    serverSocket.bind(('', serverPort))
-    serverSocket.listen(1)
-
-    while True: 
-        print('Ready to serve...') 
-        connectionSocket, addr = serverSocket.accept()
-        try:
-            # Membuka file
-            f = open("html/index.html", 'r')
-            message_body = f.read()
-            f.close()
-            request = connectionSocket.recv(1024).decode()
-            response_line="HTTP/1.1 200 OK\r\n"
-            content_type = "Content_Type : text/html\r\n\r\n"
-            response = response_line+content_type+message_body
-        except FileNotFoundError:
-            # Jika file tidak ada
-            response_line="HTTP/1.1 404 Not Found\r\n"
-            message_body ="<html><body><h1>404 NOT FOUND<h1><body><html>"
-            response = response_line+message_body
-        # Mengirim response
-        connectionSocket.send(response.encode())
-        # Menutup koneksi
-        connectionSocket.close()
-    # Menutup server
-    serverSocket.close() 
-
 
 def _thread(connectionSocket, addr):
     # Menerima request client
@@ -53,7 +20,7 @@ def _thread(connectionSocket, addr):
             response = response_line+content_type+ message_body
     else:
     # Kalau tidak ada filenya
-        with open("html/notFound.html", 'r') as f:
+        with open("notFound.html", 'r') as f:
             message_body = f.read()
             response_line="HTTP/1.1 404 Not Found\r\n"
             response = response_line+ message_body
